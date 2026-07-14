@@ -355,10 +355,12 @@ router.post("/request-password-reset", async (req, res) => {
       message: "OTP sent to email",
     });
   } catch (err) {
-    res.status(500).json({
-      message: "Unable to send OTP",
-    });
-  }
+  console.error("Forgot Password Error:", err);
+
+  res.status(500).json({
+    message: err.message,
+  });
+}
 });
 
 // Verify Otp process foir confirmatiom
