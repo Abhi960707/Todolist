@@ -23,14 +23,6 @@ app.get('/send-mail', async (req, res) => {
 })
 
 //Smtp Test Email
-const transporter = require("./config/mail");
-
-// Existing route
-app.get("/send-mail", async (req, res) => {
-  // ...
-});
-
-// Add this below it
 app.get("/smtp-test", async (req, res) => {
   try {
     await transporter.verify();
