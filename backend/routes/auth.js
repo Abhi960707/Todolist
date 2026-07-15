@@ -143,26 +143,33 @@ router.post("/login", async (req, res) => {
         const email = req.body.email?.trim().toLowerCase();
         const password = req.body.password?.trim();
 
+        console.log(`[Login] Attempt for email: ${email}`);
+
         if (!email || !password) {
+            console.log(`[Login] Rejected: Missing email or password`);
             return res.status(400).json({ message: "Email and password are required" });
         }
 
         const user = await User.findOne({ email });
         if (!user) {
+            console.log(`[Login] Rejected: User not found for email: ${email}`);
             return res.status(400).json({ message: "User not found" });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            console.log(`[Login] Rejected: Password mismatch for email: ${email}`);
             return res.status(400).json({ message: "Invalid password" });
         }
 
+        console.log(`[Login] Success: User ${email} logged in successfully`);
         res.json({
             token: createToken(user._id),
             user: sanitizeUser(user),
             message: "Login successful",
         });
     } catch (err) {
+        console.error("[Login] Exception occurred:", err);
         res.status(500).json({ message: "Unable to login" });
     }
 });

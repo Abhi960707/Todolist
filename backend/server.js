@@ -1,4 +1,5 @@
-require("dotenv").config();
+require("dotenv").config({ override: true });
+console.log("MONGODB_URI after config:", process.env.MONGODB_URI);
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
