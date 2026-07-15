@@ -9,10 +9,10 @@ const app = express();
 app.get('/send-mail', async (req, res) => {
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL,
+      from: `"Task Management System" <${process.env.EMAIL}>`,
       to: 'thisis_test_email@gmail.com',
       subject: 'Test Email For Checking Send Or Not',
-      html: '<h2>Hello Abhijeet  🚀</h2>',
+      html: '<h2>Hello Abhijeet 🚀</h2>',
     })
 
     res.json({ message: 'Email Sent Successfully' })
@@ -21,8 +21,6 @@ app.get('/send-mail', async (req, res) => {
     res.status(500).json({ message: 'Email Sending Failed' })
   }
 })
-console.log(process.env.EMAIL)
-console.log(process.env.EMAIL_PASSWORD)
 
 
 const PORT = process.env.PORT || 5000;

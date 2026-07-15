@@ -5,7 +5,6 @@ const User = require("../models/User");
 const Otp = require("../models/Otp");
 const auth = require("../middleware/auth");
 const otpGenerator = require("otp-generator");
-const nodemailer = require("nodemailer");
 const transporter = require("../config/mail");
 
 
@@ -53,13 +52,24 @@ router.post("/send-signup-otp", async (req, res) => {
         );
 
         // Send OTP via email
+        // "from" uses RFC 5321 display-name format so recipient inbox shows
+        // "Task Management System" instead of the raw Gmail username.
         await transporter.sendMail({
-            from: process.env.EMAIL,
+            from: `"Task Management System" <${process.env.EMAIL}>`,
             to: email,
             subject: "Your Signup Verification OTP",
-            html: `<h2>Welcome!</h2>
-                   <p>Your verification OTP is <strong>${otp}</strong>.</p>
-                   <p>It is valid for 10 minutes.</p>`,
+            html: `
+                <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px;border:1px solid #e0e0e0;border-radius:8px;">
+                    <h2 style="color:#2d6cdf;margin-top:0;">Welcome to Task Management System!</h2>
+                    <p>Thank you for registering. Please use the OTP below to verify your email address.</p>
+                    <div style="background:#f4f7ff;border-radius:6px;padding:16px 24px;text-align:center;margin:20px 0;">
+                        <span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#2d6cdf;">${otp}</span>
+                    </div>
+                    <p style="color:#555;">This OTP is valid for <strong>10 minutes</strong>. Do not share it with anyone.</p>
+                    <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+                    <p style="font-size:12px;color:#999;">If you did not request this, please ignore this email.</p>
+                </div>
+            `,
         });
 
         res.json({ message: "OTP sent successfully to your email" });
@@ -343,12 +353,24 @@ router.post("/request-password-reset", async (req, res) => {
 
     await user.save();
 
+    // "from" uses RFC 5321 display-name format so recipient inbox shows
+    // "Task Management System" instead of the raw Gmail username.
     await transporter.sendMail({
-      from: process.env.EMAIL,
+      from: `"Task Management System" <${process.env.EMAIL}>`,
       to: user.email,
       subject: "Password Reset OTP",
-      html: `<h2>Your OTP is ${otp}</h2>
-             <p>Valid for 10 minutes</p>`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px;border:1px solid #e0e0e0;border-radius:8px;">
+            <h2 style="color:#d93025;margin-top:0;">Password Reset Request</h2>
+            <p>We received a request to reset your password. Use the OTP below to proceed.</p>
+            <div style="background:#fff4f4;border-radius:6px;padding:16px 24px;text-align:center;margin:20px 0;">
+                <span style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#d93025;">${otp}</span>
+            </div>
+            <p style="color:#555;">This OTP is valid for <strong>10 minutes</strong>. Do not share it with anyone.</p>
+            <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+            <p style="font-size:12px;color:#999;">If you did not request a password reset, please ignore this email and your password will remain unchanged.</p>
+        </div>
+      `,
     });
 
     res.json({
