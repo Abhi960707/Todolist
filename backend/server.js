@@ -22,6 +22,34 @@ app.get('/send-mail', async (req, res) => {
   }
 })
 
+//Smtp Test Email
+const transporter = require("./config/mail");
+
+// Existing route
+app.get("/send-mail", async (req, res) => {
+  // ...
+});
+
+// Add this below it
+app.get("/smtp-test", async (req, res) => {
+  try {
+    await transporter.verify();
+
+    return res.json({
+      success: true,
+      message: "SMTP Connected Successfully",
+    });
+  } catch (err) {
+    console.error("SMTP Verify Error:", err);
+
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      code: err.code,
+    });
+  }
+});
+
 
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI =
