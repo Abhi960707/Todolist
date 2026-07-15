@@ -81,9 +81,6 @@ router.post("/send-signup-otp", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
     try {
-        //console Check
-        console.log(req.body); 
-        
         const name = req.body.name?.trim();
         const email = req.body.email?.trim().toLowerCase();
         const password = req.body.password?.trim();
