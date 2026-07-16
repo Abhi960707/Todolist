@@ -1,5 +1,6 @@
 require("dotenv").config({ override: true });
 console.log("MONGODB_URI after config:", process.env.MONGODB_URI);
+console.log("CLIENT_ORIGIN from env:", process.env.CLIENT_ORIGIN);
 const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -17,7 +18,11 @@ const ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://localhost:5175",
     process.env.CLIENT_ORIGIN,
-].filter(Boolean);
+]
+    .filter(Boolean)
+    .map(origin => origin.replace(/\/$/, ""));
+
+console.log("Allowed Origins configured:", ALLOWED_ORIGINS);
 
 app.use(
     cors({
