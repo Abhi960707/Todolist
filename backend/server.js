@@ -17,7 +17,7 @@ const ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:5175",
-      "https://todolist-eight-xi-28.vercel.app",
+    "https://todolist-eight-xi-28.vercel.app",
     process.env.CLIENT_ORIGIN,
 ]
     .filter(Boolean)
@@ -32,17 +32,25 @@ app.use(
         origin: function (origin, callback) {
             // Allow requests with no origin (mobile apps, curl, Postman)
             if (!origin) return callback(null, true);
-            if (ALLOWED_ORIGINS.indexOf(origin) === -1) {
-                const msg =
-                    "The CORS policy for this site does not allow access from the specified Origin.";
-                return callback(new Error(msg), false);
+
+            // Development → allow every origin
+
+            if (process.env.NODE_ENV !== "production") {
+                return callback(null, true);
             }
-            return callback(null, true);
+
+            // Production → allow only trusted origins
+            if (ALLOWED_ORIGINS.includes(origin)) {
+                return callback(null, true);
+            }
+            const msg =
+                "The CORS policy for this site does not allow access from the specified Origin.";
+            return callback(new Error(msg), false);
         },
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
-    })    
+    })
 );
 
 app.use(express.json({ limit: "20mb" }));
