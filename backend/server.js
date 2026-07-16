@@ -17,12 +17,15 @@ const ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
     "http://localhost:5175",
+      "https://todolist-eight-xi-28.vercel.app",
     process.env.CLIENT_ORIGIN,
 ]
     .filter(Boolean)
     .map(origin => origin.replace(/\/$/, ""));
 
 console.log("Allowed Origins configured:", ALLOWED_ORIGINS);
+console.log("CLIENT_ORIGIN:", process.env.CLIENT_ORIGIN);
+console.log("ALLOWED_ORIGINS:", ALLOWED_ORIGINS);
 
 app.use(
     cors({
@@ -39,7 +42,7 @@ app.use(
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
-    })
+    })    
 );
 
 app.use(express.json({ limit: "20mb" }));
